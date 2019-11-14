@@ -95,7 +95,7 @@ float randFloat = rng.getFloat() - 1.0f;
 ```
 
 The header also defines two additional convenience classes that meet the requirements of
-_UniformRandomBitGenerator_ which return floats and doubles instea of integers. Note, however,
+_UniformRandomBitGenerator_ which return floats and doubles instead of integers. Note, however,
 that these, too, return values in the range [1.0, 2.0).
 
 ```c++
