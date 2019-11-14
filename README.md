@@ -25,7 +25,8 @@ for(std::size_t i = 0; i < 1000000000; ++i)
 
 // Assign to a volatile to stop the compiler from
 // optimizing the whole calculation away:
-gValueSink = sum;```
+gValueSink = sum;
+```
 
 The benchmark was run using gcc 7.1.0 with options `-Ofast -march=skylake` on an
 i7-9700K, using all the standard library RNGs and `WFLCG`. The measured result is the total
@@ -63,14 +64,16 @@ void foo()
 {
     WFLCG rng;
     unsigned value = rng();
-}```
+}
+```
 
 The class has a constructors taking zero, one or two initial seed values of type
 `std::uint32_t`. The default initial seed value is `0`.
 
 ```c++
 WFLCG rng1(100); // initialize with a seed of 100
-WFLCG rng2(12, 34); // initialize with seeds 12 and 34```
+WFLCG rng2(12, 34); // initialize with seeds 12 and 34
+```
 
 ## Generating random floating point values
 
@@ -78,7 +81,8 @@ Member functions:
 
 ```c++
 float getFloat();
-double getDouble();```
+double getDouble();
+```
 
 These can be used to get floating point values instead of integer values. They, too, are
 designed to be as efficient as possible. Note, however, that they return values in the
@@ -87,7 +91,8 @@ If you want the value in the range [0.0, 1.0), subtract 1.0 from the returned va
 
 ```c++
 WFLCG rng;
-float randFloat = rng.getFloat() - 1.0f;```
+float randFloat = rng.getFloat() - 1.0f;
+```
 
 The header also defines two additional convenience classes that meet the requirements of
 _UniformRandomBitGenerator_ which return floats and doubles instea of integers. Note, however,
@@ -95,7 +100,8 @@ that these, too, return values in the range [1.0, 2.0).
 
 ```c++
 class WFLCG_f; // returns random floats in the range [1.0, 2.0)
-class WFLCG_d; // returns random doubles in the range [1.0, 2.0)```
+class WFLCG_d; // returns random doubles in the range [1.0, 2.0)
+```
 
 Note that in the case of `getDouble()` / `WFLCG_d`, only the 32 most-significant bits of
 the mantissa will be randomized. (The remaining 20 least-significant bits of the mantissa
@@ -113,7 +119,8 @@ Member functions:
 static constexpr unsigned kBufferSize = 16;
 
 const std::uint32_t* buffer() const;
-void refillBuffer();```
+void refillBuffer();
+```
 
 The values can be accessed very efficiently for example like this:
 
@@ -124,7 +131,8 @@ for(unsigned outer = 0; outer < someAmount; ++outer)
         doSomethingWithValue(rng.buffer()[inner]);
 
     rng.refillBuffer();
-}```
+}
+```
 
 Note, however, that the values inside the buffer are not of equal quality as the ones
 returned by `WFLCG::operator()`. In some situations this might be enough. In order to
@@ -133,4 +141,5 @@ lowest, like:
 
 ```c++
     unsigned randValue = rng.buffer()[inner];
-    randValue ^= randValue >> 24;```
+    randValue ^= randValue >> 24;
+```
