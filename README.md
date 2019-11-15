@@ -119,6 +119,10 @@ Member functions:
 static constexpr unsigned kBufferSize = 16;
 
 const std::uint32_t* buffer() const;
+
+float bufferElementAsFloat(unsigned);
+double bufferElementAsDouble(unsigned);
+
 void refillBuffer();
 ```
 
@@ -143,3 +147,10 @@ lowest, like:
     unsigned randValue = rng.buffer()[inner];
     randValue ^= randValue >> 24;
 ```
+
+To get the elements of the buffer as a `float` or as a `double`, use the `bufferElementAsFloat()`
+and `bufferElementAsDouble()` functions. (The latter does the xor operation described above for
+increased randomness quality. The float version does not need to do this because the lower bits
+are dropped in the mantissa anyway.) Note that no boundary checks are done to the parameter
+given to these functions, which should be between 0 and `kBufferSize-1`. A parameter value
+larger than that will cause an out-of-bounds access.
