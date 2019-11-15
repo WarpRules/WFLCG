@@ -28,8 +28,8 @@ class WFLCG
     static constexpr unsigned kBufferSize = 16;
 
     const std::uint32_t* buffer() const { return mSeeds; }
-    float bufferElementAsFloat(unsigned);
-    double bufferElementAsDouble(unsigned);
+    float bufferElementAsFloat(unsigned) const;
+    double bufferElementAsDouble(unsigned) const;
     void refillBuffer();
 
 
@@ -137,14 +137,14 @@ inline double WFLCG::getDouble()
     return conv.dValue;
 }
 
-inline float WFLCG::bufferElementAsFloat(unsigned index)
+inline float WFLCG::bufferElementAsFloat(unsigned index) const
 {
     union { float fValue; std::uint32_t uValue; } conv;
     conv.uValue = UINT32_C(0x3F800000) | (mSeeds[index] >> 9);
     return conv.fValue;
 }
 
-inline double WFLCG::bufferElementAsDouble(unsigned index)
+inline double WFLCG::bufferElementAsDouble(unsigned index) const
 {
     union { double dValue; std::uint64_t uValue; } conv;
     std::uint32_t value = mSeeds[index];
