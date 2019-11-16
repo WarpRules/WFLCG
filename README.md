@@ -102,6 +102,7 @@ that these, too, return values in the range [1.0, 2.0).
 ```c++
 class WFLCG_f; // returns random floats in the range [1.0, 2.0)
 class WFLCG_d; // returns random doubles in the range [1.0, 2.0)
+class WFLCG_d2; // returns random doubles in the range [1.0, 2.0)
 ```
 
 Note that in the case of `getDouble()` / `WFLCG_d`, only the 32 most-significant bits of
