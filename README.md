@@ -82,6 +82,7 @@ Member functions:
 ```c++
 float getFloat();
 double getDouble();
+double getDouble2();
 ```
 
 These can be used to get floating point values instead of integer values. They, too, are
@@ -107,6 +108,13 @@ Note that in the case of `getDouble()` / `WFLCG_d`, only the 32 most-significant
 the mantissa will be randomized. (The remaining 20 least-significant bits of the mantissa
 will be zero.) This means that the returned double can have 2<sup>32</sup> different values.
 
+`getDouble2()` and `WFLCG_d2` are versions of this that will consume two values from the
+random number stream in order to fill the entire mantissa of the result (with high-quality
+mixing). Thus the period of this version is 2<sup>35</sup>.
+
+Important: Do not mix calls to `getDouble2()` with calls to any of the other value retrieval
+functions, as (for performance reasons) no sanity checks are done to the internal index value.
+
 ## Direct value access
 
 Even more efficiency can be achieved by reading the internal buffer of the class directly
@@ -122,6 +130,7 @@ const std::uint32_t* buffer() const;
 
 float bufferElementAsFloat(unsigned);
 double bufferElementAsDouble(unsigned);
+double bufferElementAsDouble2(unsigned);
 
 void refillBuffer();
 ```
@@ -154,3 +163,17 @@ increased randomness quality. The float version does not need to do this because
 are dropped in the mantissa anyway.) Note that no boundary checks are done to the parameter
 given to these functions, which should be between 0 and `kBufferSize-1`. A parameter value
 larger than that will cause an out-of-bounds access.
+
+`bufferElementAsDouble2()` will take the value at the specified index as well as the one after
+it. Therefore the parameter should be in the range between 0 and `kBufferSize-2`. The best
+way to access this is to make the index jump by 2, like:
+
+```c++
+for(unsigned outer = 0; outer < someAmount; ++outer)
+{
+    for(unsigned inner = 0; inner < WFLCG::kBufferSize; inner += 2)
+        doSomethingWithValue(rng.bufferElementAsDouble2(inner));
+
+    rng.refillBuffer();
+}
+```

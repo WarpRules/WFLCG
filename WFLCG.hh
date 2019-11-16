@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-#define WFLCG_VERSION 0x010000
-#define WFLCG_VERSION_STRING "1.0.0"
+#define WFLCG_VERSION 0x010001
+#define WFLCG_VERSION_STRING "1.0.1"
 #define WFLCG_COPYRIGHT_STRING "WFLCG v" WFLCG_VERSION_STRING " (C)2019 Juha Nieminen"
 
 //============================================================================
@@ -24,12 +24,14 @@ class WFLCG
 
     float getFloat();
     double getDouble();
+    double getDouble2();
 
     static constexpr unsigned kBufferSize = 16;
 
     const std::uint32_t* buffer() const { return mSeeds; }
     float bufferElementAsFloat(unsigned) const;
     double bufferElementAsDouble(unsigned) const;
+    double bufferElementAsDouble2(unsigned) const;
     void refillBuffer();
 
 
@@ -56,6 +58,20 @@ class WFLCG_f: public WFLCG
 // WFLCG_d
 //============================================================================
 class WFLCG_d: public WFLCG
+{
+ public:
+    using WFLCG::WFLCG;
+
+    using result_type = double;
+    static constexpr result_type min() { return 1.0; }
+    static constexpr result_type max() { return 2.0; }
+    result_type operator()();
+};
+
+//============================================================================
+// WFLCG_d2
+//============================================================================
+class WFLCG_d2: public WFLCG
 {
  public:
     using WFLCG::WFLCG;
@@ -137,6 +153,18 @@ inline double WFLCG::getDouble()
     return conv.dValue;
 }
 
+inline double WFLCG::getDouble2()
+{
+    if(mIndex == kBufferSize) refillBuffer();
+    union { double dValue; std::uint64_t uValue; } conv;
+    std::uint32_t value1 = mSeeds[mIndex], value2 = mSeeds[mIndex+1];;
+    conv.uValue = (UINT64_C(0x3FF0000000000000) |
+                   (((static_cast<std::uint64_t>(value1)) << 20) ^
+                    ((static_cast<std::uint64_t>(value2)) >> 4)));
+    mIndex += 2;
+    return conv.dValue;
+}
+
 inline float WFLCG::bufferElementAsFloat(unsigned index) const
 {
     union { float fValue; std::uint32_t uValue; } conv;
@@ -154,6 +182,16 @@ inline double WFLCG::bufferElementAsDouble(unsigned index) const
     return conv.dValue;
 }
 
+inline double WFLCG::bufferElementAsDouble2(unsigned index) const
+{
+    union { double dValue; std::uint64_t uValue; } conv;
+    std::uint32_t value1 = mSeeds[index], value2 = mSeeds[index+1];
+    conv.uValue = (UINT64_C(0x3FF0000000000000) |
+                   (((static_cast<std::uint64_t>(value1)) << 20) ^
+                    ((static_cast<std::uint64_t>(value2)) >> 4)));
+    return conv.dValue;
+}
+
 inline WFLCG_f::result_type WFLCG_f::operator()()
 {
     return getFloat();
@@ -162,5 +200,10 @@ inline WFLCG_f::result_type WFLCG_f::operator()()
 inline WFLCG_d::result_type WFLCG_d::operator()()
 {
     return getDouble();
+}
+
+inline WFLCG_d::result_type WFLCG_d2::operator()()
+{
+    return getDouble2();
 }
 #endif
