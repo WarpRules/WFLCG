@@ -28,8 +28,8 @@ for(std::size_t i = 0; i < 1000000000; ++i)
 gValueSink = sum;
 ```
 
-The benchmark was run using gcc 7.1.0 with options `-Ofast -march=skylake` on an
-i7-9700K, using all the standard library RNGs and `WFLCG`. The measured result is the total
+The benchmark was run on Windows using mingw64 (gcc 7.1.0) with options `-Ofast -march=skylake`
+on an i7-9700K, using all the standard library RNGs and `WFLCG`. The measured result is the total
 runtime (thus a lower value is better):
 
 | Random number generator | Total time (seconds) |
@@ -45,12 +45,26 @@ runtime (thus a lower value is better):
 | `WFLCG` | 0.57 |
 | `WFLCG` (direct) | 0.29 |
 
+Running the benchmark on an iMac (i5-2400S) using clang (Apple LLVM version 10.0.0
+clang-1000.11.45.5) with `-Ofast -march=native` yields the following results:
+
+| Random number generator | Total time (seconds) |
+|:-----------------------:|:--------------------:|
+| `std::minstd_rand0` | 6.41 |
+| `std::minstd_rand` | 5.17 |
+| `std::ranlux24_base` | 6.81 |
+| `std::ranlux48_base` | 7.27 |
+| `std::knuth_b` | 7.11 |
+| `std::mt19937` | 6.57 |
+| `WFLCG` | 1.64 |
+| `WFLCG` (direct) | 0.43 |
+
 The last result comes from accessing the internal buffer of the class directly.
 See below for details.
 
 The speed of the class relies on the auto-vectorization optimizations of compilers
 like gcc and clang. These speeds are thus heavily relying on turning on compiler
-optimizations.
+optimizations (eg. `-Ofast`).
 
 ## Basic usage
 
