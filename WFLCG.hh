@@ -88,6 +88,7 @@ class WFLCG_d2: public WFLCG
 //============================================================================
 inline WFLCG::WFLCG(std::uint32_t seed)
 {
+    seed = seed * UINT32_C(2364742333) + UINT32_C(14567);
     for(unsigned i = 0; i < kBufferSize; ++i)
     {
         seed = seed * UINT32_C(2364742333) + UINT32_C(14567);
@@ -97,6 +98,8 @@ inline WFLCG::WFLCG(std::uint32_t seed)
 
 inline WFLCG::WFLCG(std::uint32_t seed1, std::uint32_t seed2)
 {
+    seed1 = seed1 * UINT32_C(2364742333) + UINT32_C(14567);
+    seed2 = seed2 * UINT32_C(4112992229) + UINT32_C(12345);
     for(unsigned i = 0; i < kBufferSize; i += 2)
     {
         seed1 = seed1 * UINT32_C(2364742333) + UINT32_C(14567);

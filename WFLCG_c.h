@@ -17,6 +17,7 @@ typedef struct
 
 inline void WFLCG_c_init_1_seed(WFLCG_c* obj, uint32_t seed)
 {
+    seed = seed * UINT32_C(2364742333) + UINT32_C(14567);
     for(unsigned i = 0; i < WFLCG_C_BUFFER_SIZE; ++i)
     {
         seed = seed * UINT32_C(2364742333) + UINT32_C(14567);
@@ -27,6 +28,8 @@ inline void WFLCG_c_init_1_seed(WFLCG_c* obj, uint32_t seed)
 
 inline void WFLCG_c_init_2_seeds(WFLCG_c* obj, uint32_t seed1, uint32_t seed2)
 {
+    seed1 = seed1 * UINT32_C(2364742333) + UINT32_C(14567);
+    seed2 = seed2 * UINT32_C(4112992229) + UINT32_C(12345);
     for(unsigned i = 0; i < WFLCG_C_BUFFER_SIZE; i += 2)
     {
         seed1 = seed1 * UINT32_C(2364742333) + UINT32_C(14567);
