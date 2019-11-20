@@ -157,7 +157,7 @@ inline double WFLCG::getDouble2()
 {
     if(mIndex == kBufferSize) refillBuffer();
     union { double dValue; std::uint64_t uValue; } conv;
-    std::uint32_t value1 = mSeeds[mIndex], value2 = mSeeds[mIndex+1];;
+    std::uint32_t value1 = mSeeds[mIndex], value2 = mSeeds[mIndex+1];
     conv.uValue = (UINT64_C(0x3FF0000000000000) |
                    (((static_cast<std::uint64_t>(value1)) << 20) ^
                     ((static_cast<std::uint64_t>(value2)) >> 4)));

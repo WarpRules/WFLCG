@@ -1,6 +1,6 @@
 # WFLCG
 
-This is a small and simple single-header pseudorandom number generator for C++11 which
+This is a small and simple single-header pseudorandom number generator for C++11 and C99 which
 aims to be as fast as possible while still giving decent-quality random numbers. The
 main usage scenario is applications, like for example simulations, that require billions
 of pseudorandom numbers as efficiently as possible.
@@ -8,6 +8,8 @@ of pseudorandom numbers as efficiently as possible.
 `WFLCG` meets the requirements of _UniformRandomBitGenerator_ (and thus can be used anywhere
 where a C++ standard library RNG can). It generates 32-bit unsigned integers (and has
 versions that return floats and doubles, see below). The period is 2<sup>36</sup>.
+
+A C version of the library is also provided in the `WFLCG_c.h` header file.
 
 While `WFLCG` is LCG-based, and is not cryptographically strong, it is nevertheless of
 higher quality than a simple LCG. It passes all Testu01 SmallCrush tests with flying
@@ -190,5 +192,82 @@ for(unsigned outer = 0; outer < someAmount; ++outer)
         doSomethingWithValue(rng.bufferElementAsDouble2(inner));
 
     rng.refillBuffer();
+}
+```
+
+## C version
+
+Types and functions for basic usage. Their functionality is equivalent to those of the C++
+version.
+
+```c
+#define WFLCG_C_BUFFER_SIZE 16
+
+typedef struct
+{
+    uint32_t buffer[WFLCG_C_BUFFER_SIZE];
+    unsigned index;
+} WFLCG_c;
+
+void WFLCG_c_init_default(WFLCG_c* obj);
+void WFLCG_c_init_1_seed(WFLCG_c* obj, uint32_t seed);
+void WFLCG_c_init_2_seeds(WFLCG_c* obj, uint32_t seed1, uint32_t seed2)
+
+uint32_t WFLCG_c_get_value(WFLCG_c* obj);
+float WFLCG_c_get_float(WFLCG_c* obj);
+double WFLCG_c_get_double(WFLCG_c* obj);
+double WFLCG_c_get_double2(WFLCG_c* obj);
+```
+
+The buffer can be accessed directly in the struct (same notes apply as in the C++
+version). The following functions are provided for direct access:
+
+```c
+void WFLCG_c_refill_buffer(WFLCG_c* obj);
+float WFLCG_c_buffer_element_float(WFLCG_c* obj, unsigned index);
+double WFLCG_c_buffer_element_double(WFLCG_c* obj, unsigned index);
+double WFLCG_c_buffer_element_double2(WFLCG_c* obj, unsigned index);
+```
+
+Example of basic usage:
+
+```c
+#include "WFLCG_c.h"
+#include <stdio.h>
+
+int main()
+{
+    WFLCG_c rng;
+    WFLCG_c_init_default(&rng);
+
+    for(unsigned i = 0; i < 10; ++i)
+    {
+        uint32_t value = WFLCG_c_get_value(&rng);
+        printf("%u\n", value);
+    }
+}
+```
+
+Example of direct access:
+
+```c
+#include "WFLCG_c.h"
+#include <stdio.h>
+
+int main()
+{
+    WFLCG_c rng;
+    WFLCG_c_init_1_seed(&rng, 1234567);
+
+    for(unsigned outer = 0; outer < 10; ++outer)
+    {
+        for(unsigned inner = 0; inner < WFLCG_C_BUFFER_SIZE; ++inner)
+        {
+            double value = WFLCG_c_buffer_element_double(&rng, inner);
+            printf("%.15f\n", value);
+        }
+
+        WFLCG_c_refill_buffer(&rng);
+    }
 }
 ```
