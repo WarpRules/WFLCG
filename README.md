@@ -271,3 +271,18 @@ int main()
     }
 }
 ```
+
+## FAQ
+
+"Why not use 64-bit seeds, thus returning 64-bit values and getting a period of 2<sup>68</sup>?"
+
+The speed of the class relies on auto-vectorization performed by modern compilers. This means
+that the 16 multiplications and 16 additions done each time the internal buffer is repopulated
+are performed by just 2 multiplication and 2 addition SSE/AVX opcodes (in other words,
+8 multiplications are done at the same time with one single opcode, etc.)
+
+The problem is that neither SSE nor AVX support doing this with 64-bit integers, only with
+32-bit ones. (The first architecture supporting this with 64-bit integers is AVX-512, which
+is still extremely uncommon, even in the most modern desktop CPUs, as of writing this.)
+When using 64-bit integers, the compiler will generate additional code to get around this
+limitation, which is slower than using 32-bit integers.
