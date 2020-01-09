@@ -56,6 +56,8 @@ clang-1000.11.45.5) with `-Ofast -march=native` yields the following results:
 | `std::minstd_rand` | 5.17 |
 | `std::ranlux24_base` | 6.81 |
 | `std::ranlux48_base` | 7.27 |
+| `std::ranlux24` | 74.02 |
+| `std::ranlux48` | 264.28 |
 | `std::knuth_b` | 7.11 |
 | `std::mt19937` | 6.57 |
 | `WFLCG` | 1.64 |
